@@ -1,0 +1,14 @@
+---
+# tasks file for roles/base
+
+- name: Setup Proxmox updates
+  ansible.builtin.import_tasks: updates.yml
+
+- name: Install packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Remove subscription nag
+  ansible.builtin.import_tasks: subscription-nag.yml
+
+- name: Setup storage
+  ansible.builtin.import_tasks: storage.yml

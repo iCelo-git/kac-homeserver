@@ -1,0 +1,12 @@
+---
+- name: Upgrade packages
+  ansible.builtin.apt:
+    upgrade: true
+    update_cache: true
+
+- name: Install additional packages
+  ansible.builtin.apt:
+    name:
+      - vim
+      - python3-proxmoxer
+    state: present

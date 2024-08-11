@@ -1,0 +1,15 @@
+---
+- name: Setup KAC-homeserver
+  hosts: proxmox
+  become: true
+  pre_tasks:
+    - name: Prepare control node
+      ansible.builtin.import_tasks: pre_tasks/control_node.yml
+  roles:
+    - base
+    - docker_container
+- name: Setup Docker LXC container
+  hosts: docker
+  become: true
+  roles:
+    - docker

@@ -1,0 +1,7 @@
+---
+- name: Install python dependencies on control node
+  ansible.builtin.package:
+    name:
+      - python-proxmoxer
+    state: present
+  delegate_to: localhost

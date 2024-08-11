@@ -1,0 +1,44 @@
+---
+- name: Check the newest container template image
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      pveam available | grep "{{ docker_container_os }}" | awk '{print $2}' | sort -V | tail -n 1
+    executable: /bin/bash
+  register: template
+  changed_when: true
+  failed_when: template.stdout == ""
+
+- name: Download LXC container template
+  community.general.proxmox_template:
+    node: "{{ hostvars['proxmox']['ansible_hostname'] }}"
+    api_user: "{{ ansible_user }}@pam"
+    api_password: "{{ proxmox_password }}"
+    api_host: "{{ hostvars['proxmox']['ansible_host'] }}"
+    storage: local
+    content_type: vztmpl
+    template: "{{ template.stdout }}"
+
+- name: Create LXC Docker container
+  community.general.proxmox:
+    vmid: 101
+    node: "{{ hostvars['proxmox']['ansible_hostname'] }}"
+    api_user: "{{ ansible_user }}@pam"
+    api_password: "{{ proxmox_password }}"
+    api_host: "{{ ansible_host }}"
+    hostname: docker
+    password: "{{ hostvars['docker']['docker_password'] }}"
+    pubkey: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+    ostemplate: "local:vztmpl/{{ template.stdout }}"
+    storage: local-lvm
+    netif: '{"net0":"name=eth0,gw={{ network_gateway }},ip={{ hostvars["docker"]["ansible_host"] }}/24,bridge=vmbr0"}'
+    state: present
+
+- name: Start LXC Docker container
+  community.general.proxmox:
+    vmid: 101
+    node: "{{ hostvars['proxmox']['ansible_hostname'] }}"
+    api_user: "{{ ansible_user }}@pam"
+    api_password: "{{ proxmox_password }}"
+    api_host: "{{ ansible_host }}"
+    state: started

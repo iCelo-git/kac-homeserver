@@ -1,0 +1,16 @@
+---
+- name: Upgrade packages
+  ansible.builtin.apt:
+    upgrade: true
+    update_cache: true
+
+- name: Install Docker
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+
+# - name: Idk what was that for
+#   ansible.builtin.command:
+#     cmd: install -m 0755 -d /etc/apt/keyrings

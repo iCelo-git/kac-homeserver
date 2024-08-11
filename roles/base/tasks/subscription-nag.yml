@@ -1,0 +1,17 @@
+---
+- name: Create a backup of proxmoxlib.js
+  ansible.builtin.copy:
+    src: "{{ base_proxmoxtmp_file }}"
+    dest: "{{ base_proxmoxtmp_file }}.backup"
+    remote_src: true
+    mode: "644"
+    force: false
+  register: backup
+
+- name: Modify proxmoxlib.js
+  ansible.builtin.replace:
+    path: "{{ base_proxmoxtmp_file }}.backup"
+    regexp: '(function\(orig_cmd\) \{)'
+    replace: '\1\n\torig_cmd();\n\treturn;'
+  when: backup.changed
+  notify: Restart pveproxy service

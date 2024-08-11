@@ -1,0 +1,7 @@
+---
+# handlers file for roles/base
+
+- name: Restart pveproxy service
+  ansible.builtin.systemd:
+    name: pveproxy.service
+    state: restarted
