@@ -1,8 +1,2 @@
 ---
-# defaults file for roles/base
-base_ntfy_server_url: https://ntfy.sh/kac-homeserver
-
-base_proxmox_user: "root"
-base_proxmox_password: "root"
-
 base_proxmoxtmp_file: "/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"

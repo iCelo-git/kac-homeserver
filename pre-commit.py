@@ -5,7 +5,6 @@ import os
 hook_path = ".git/hooks/pre-commit"
 files_to_encrypt = [
     "host_vars/*",
-    "roles/base/vars/credentials.yml",
 ]
 files_to_encrypt_formated = "{}".format(' '.join(files_to_encrypt))
 
