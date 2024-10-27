@@ -1,0 +1,15 @@
+---
+- name: Run proxmox-ntfy container
+  community.general.docker_container:
+    name: proxmox-ntfy
+    image: ibacalu/proxmox-ntfy:latest
+    state: started
+    published_ports:
+      - "8080:8080"
+    env:
+      NTFY_SERVER_URL: "{{ docker_ntfy_server_url }}"
+      PROXMOX_API_URL: "{{ hostvars['proxmox']['ansible_host'] }}:8006"
+      PROXMOX_USER: "{{ hostvars['proxmox']['ansible_user'] }}@pam"
+      PROXMOX_PASS: "{{ hostvars['proxmox']['proxmox_password'] }}"
+    recreate: true
+    restart_policy: unless-stopped

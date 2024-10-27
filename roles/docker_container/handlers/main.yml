@@ -1,0 +1,4 @@
+---
+- name: Reboot the Proxmox host
+  ansible.builtin.reboot:
+    reboot_timeout: 300

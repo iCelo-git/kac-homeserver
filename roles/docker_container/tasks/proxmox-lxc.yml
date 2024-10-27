@@ -1,0 +1,7 @@
+---
+- name: Add kernel modules
+  ansible.builtin.lineinfile:
+    path: /etc/modules-load.d/modules.conf
+    line: overlay
+    state: present
+  notify: Reboot the Proxmox host
