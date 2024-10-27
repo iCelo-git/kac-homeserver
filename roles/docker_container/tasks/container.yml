@@ -31,6 +31,10 @@
     pubkey: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
     ostemplate: "local:vztmpl/{{ template.stdout }}"
     storage: local-lvm
+    onboot: true
+    features:
+      - keyctl=1
+      - nesting=1
     netif: '{"net0":"name=eth0,gw={{ network_gateway }},ip={{ hostvars["docker"]["ansible_host"] }}/24,bridge=vmbr0"}'
     state: present
 

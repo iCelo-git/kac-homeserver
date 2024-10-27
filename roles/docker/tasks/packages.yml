@@ -1,16 +1,54 @@
 ---
 - name: Upgrade packages
   ansible.builtin.apt:
+    update_cache: true
+
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+    state: present
+
+- name: Add Docker's official GPG key
+  ansible.builtin.command:
+    cmd: "{{ item }}"
+  loop:
+    - install -m 0755 -d /etc/apt/keyrings
+    - curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    - chmod a+r /etc/apt/keyrings/docker.asc
+  register: gpg_key
+  changed_when: gpg_key.rc != 0
+
+- name: Get system architecture
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  register: os_arch
+  changed_when: false
+
+- name: Get system version codename
+  ansible.builtin.shell: . /etc/os-release && echo "$VERSION_CODENAME"
+  register: os_codename
+  changed_when: false
+
+- name: Add Docker repository
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/docker.list
+    line: "deb [arch={{ os_arch.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ os_codename.stdout }} stable"
+    create: true
+    mode: '644'
+
+- name: Upgrade packages
+  ansible.builtin.apt:
     upgrade: true
     update_cache: true
 
-- name: Install Docker
+- name: Install packages
   ansible.builtin.apt:
     name:
-      - docker.io
-      - docker-compose
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
     state: present
-
-# - name: Idk what was that for
-#   ansible.builtin.command:
-#     cmd: install -m 0755 -d /etc/apt/keyrings

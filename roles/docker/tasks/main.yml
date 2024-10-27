@@ -3,3 +3,6 @@
 
 - name: Install packages
   ansible.builtin.import_tasks: packages.yml
+
+- name: Run proxmox-ntfy docker container
+  ansible.builtin.import_tasks: proxmox-ntfy.yml

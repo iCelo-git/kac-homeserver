@@ -1,5 +1,6 @@
 ---
-# tasks file for roles/docker
+- name: Setup unprivileged LXC container support on Proxmox
+  ansible.builtin.import_tasks: proxmox-lxc.yml
 
 - name: Setup LXC container
   ansible.builtin.import_tasks: container.yml
