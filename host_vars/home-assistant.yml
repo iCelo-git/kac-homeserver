@@ -1,0 +1,6 @@
+---
+ansible_host: 192.168.1.208
+
+vm_cores: 2
+vm_memory: 2024
+vm_disk_image_url: https://github.com/home-assistant/operating-system/releases/download/13.2/haos_ova-13.2.qcow2.xz

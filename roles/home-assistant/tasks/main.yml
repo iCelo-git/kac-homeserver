@@ -1,0 +1,68 @@
+---
+- name: Download the VM disk image
+  ansible.builtin.get_url:
+    url: "{{ hostvars['home-assistant']['vm_disk_image_url'] }}"
+    dest: /tmp/haos_ova-13.2.qcow2.xz
+    mode: '0644'
+
+- name: Extract the VM disk image
+  ansible.builtin.command:
+    cmd: xz -d /tmp/haos_ova-13.2.qcow2.xz
+    chdir: /tmp
+    creates: /tmp/haos_ova-13.2.qcow2
+  register: extract
+  changed_when: extract.rc != 0
+
+- name: Create a VM
+  community.general.proxmox_kvm:
+    vmid: 102
+    node: "{{ hostvars['proxmox']['ansible_hostname'] }}"
+    api_user: "{{ ansible_user }}@pam"
+    api_password: "{{ proxmox_password }}"
+    api_host: "{{ ansible_host }}"
+    name: home-assistant
+    storage: local-lvm
+    onboot: true
+    agent: true
+    cpu: host
+    cores: "{{ hostvars['home-assistant']['vm_cores'] }}"
+    memory: "{{ hostvars['home-assistant']['vm_memory'] }}"
+    bios: ovmf
+    ostype: l26
+    machine: q35
+    scsihw: virtio-scsi-pci
+    efidisk0:
+      efitype: 4m
+      format: raw
+      storage: local-lvm
+      pre_enrolled_keys: false
+    net:
+      net0: 'virtio,bridge=vmbr0'
+    state: present
+
+- name: Import disk to VM
+  ansible.builtin.command:
+    cmd: qm importdisk 102 /tmp/haos_ova-13.2.qcow2 local-lvm
+  register: importdisk
+  changed_when: importdisk.rc != 0
+
+- name: Create a disk
+  ansible.builtin.command:
+    cmd: qm set 102 --scsi1 local-lvm:vm-102-disk-1,discard=on
+  register: createdisk
+  changed_when: createdisk.rc != 0
+
+- name: Change the boot order
+  ansible.builtin.command:
+    cmd: qm set 102 --boot order=scsi1
+  register: createdisk
+  changed_when: createdisk.rc != 0
+
+- name: Power on the VM
+  community.general.proxmox_kvm:
+    vmid: 102
+    node: "{{ hostvars['proxmox']['ansible_hostname'] }}"
+    api_user: "{{ ansible_user }}@pam"
+    api_password: "{{ proxmox_password }}"
+    api_host: "{{ ansible_host }}"
+    state: started

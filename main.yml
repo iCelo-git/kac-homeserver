@@ -8,6 +8,7 @@
   roles:
     - base
     - docker_container
+    - home-assistant
 - name: Setup Docker LXC container
   hosts: docker
   become: true

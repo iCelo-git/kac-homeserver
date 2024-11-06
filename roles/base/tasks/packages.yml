@@ -9,4 +9,5 @@
     name:
       - vim
       - python3-proxmoxer
+      - xz-utils
     state: present

@@ -1,6 +1,4 @@
 ---
-# tasks file for roles/docker
-
 - name: Install packages
   ansible.builtin.import_tasks: packages.yml
 

@@ -1,6 +1,4 @@
 ---
-# tasks file for roles/base
-
 - name: Setup Proxmox updates
   ansible.builtin.import_tasks: updates.yml
 
