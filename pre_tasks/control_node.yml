@@ -1,7 +1,16 @@
 ---
-- name: Install python dependencies on control node
+- name: Install python dependencies on control node (Arch)
   ansible.builtin.package:
     name:
       - python-proxmoxer
     state: present
   delegate_to: localhost
+  when: ansible_distribution == 'Arch'
+
+- name: Install python dependencies on control node (Debian)
+  ansible.builtin.package:
+    name:
+      - python3-proxmoxer
+    state: present
+  delegate_to: localhost
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
